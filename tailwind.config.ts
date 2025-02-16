@@ -12,6 +12,12 @@ export default {
         background: "var(--background)",
         foreground: "var(--foreground)",
       },
+      height: {
+        'app-main': 'calc(100% - 3rem)',
+      },
+      width: {
+        'canvas': 'calc(100% - 8rem)',
+      },
     },
   },
   plugins: [],
