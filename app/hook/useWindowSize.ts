@@ -16,8 +16,8 @@ const useCanvasSize = (): CanvasSize => {
 
     const updateSize = () => {
       setSize({
-        width: window.innerWidth - 48,
-        height: window.innerHeight - 128,
+        width: window.innerWidth - 128,
+        height: window.innerHeight - 48,
       });
     };
 
