@@ -1,4 +1,4 @@
-import { getMousePoint } from "./utils";
+import { getMousePoint, getDistance } from "./utils";
 
 export abstract class Shape {
   abstract readonly name: string;
@@ -20,6 +20,17 @@ export abstract class Shape {
     this.mouseStartX = clientX;
     this.mouseStartY = clientY;
   }
+
+  _getMouseStartEndPoints(event: React.MouseEvent<HTMLCanvasElement>) {
+    const { clientX, clientY } = getMousePoint(event);
+
+    const startX = Math.min(this.mouseStartX, clientX);
+    const endX = Math.max(this.mouseStartX, clientX);
+    const startY = Math.min(this.mouseStartY, clientY);
+    const endY = Math.max(this.mouseStartY, clientY);
+
+    return { startX, startY, endX, endY };
+  }
 }
 
 export class Rectangle extends Shape {
@@ -27,22 +38,14 @@ export class Rectangle extends Shape {
   w = 0;
   h = 0;
 
-  constructor(
-    public mouseStartX: number,
-    public mouseStartY: number,
-  ) {
+  constructor(public mouseStartX: number, public mouseStartY: number) {
     super();
     this.x = mouseStartX;
     this.y = mouseStartY;
   }
 
   override handleMouseRelease(event: React.MouseEvent<HTMLCanvasElement>) {
-    const { clientX, clientY } = getMousePoint(event);
-
-    const startX = Math.min(this.mouseStartX, clientX);
-    const endX = Math.max(this.mouseStartX, clientX);
-    const startY = Math.min(this.mouseStartY, clientY);
-    const endY = Math.max(this.mouseStartY, clientY);
+    const { startX, startY, endX, endY } = this._getMouseStartEndPoints(event);
 
     this.x = startX;
     this.y = startY;
@@ -61,12 +64,22 @@ export class Rectangle extends Shape {
       x >= this.x && x <= this.x + this.w && y >= this.y && y <= this.y + this.h
     );
   }
+
+  handleResize(event: React.MouseEvent<HTMLCanvasElement>) {
+    const { clientX, clientY } = getMousePoint(event);
+    const diffX = clientX - this.mouseStartX;
+    const diffY = clientY - this.mouseStartY;
+    this.w += diffX;
+    this.h += diffY;
+    this.mouseStartX = clientX;
+    this.mouseStartY = clientY;
+  }
 }
 
 export class Circle extends Shape {
   name = "circle";
   r = 0;
-  
+
   constructor(public mouseStartX: number, public mouseStartY: number) {
     super();
     this.x = mouseStartX;
@@ -75,10 +88,7 @@ export class Circle extends Shape {
 
   override handleMouseRelease(event: React.MouseEvent<HTMLCanvasElement>) {
     const { clientX, clientY } = getMousePoint(event);
-    this.r = Math.sqrt(
-      Math.pow(Math.abs(this.x - clientX), 2) +
-        Math.pow(Math.abs(this.y - clientY), 2)
-    );
+    this.r = getDistance(this.x, this.y, clientX, clientY);
   }
 
   override draw(context: CanvasRenderingContext2D) {
@@ -90,5 +100,22 @@ export class Circle extends Shape {
   override isPointInsideShape(x: number, y: number) {
     const distanceSquared = (x - this.x) ** 2 + (y - this.y) ** 2;
     return distanceSquared <= this.r ** 2;
+  }
+
+  handleResize(event: React.MouseEvent<HTMLCanvasElement>) {
+    const { clientX, clientY } = getMousePoint(event);
+
+    const initialDistance = getDistance(
+      this.x,
+      this.y,
+      this.mouseStartX,
+      this.mouseStartY
+    );
+    const finalDistance = getDistance(this.x, this.y, clientX, clientY);
+    const delta = finalDistance - initialDistance;
+
+    this.r = Math.max(0, this.r + delta);
+    this.mouseStartX = clientX;
+    this.mouseStartY = clientY;
   }
 }

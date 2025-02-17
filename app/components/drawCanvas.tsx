@@ -42,7 +42,6 @@ const DrawingCanvas = () => {
     if (currentElement) {
       currentElement.draw(context);
     }
-
   }, [elements, currentElement]);
 
   const handleMouseDown = (event: React.MouseEvent<HTMLCanvasElement>) => {
@@ -55,24 +54,22 @@ const DrawingCanvas = () => {
         const ActiveShape = ShapeClassMap[activeShape];
         const element = new ActiveShape(clientX, clientY);
         setElements([...elements, element]);
-        return;
-      case Actions.move:
-        let index: number;
-
+        break;
+      default:
         for (let i = elements.length - 1; i >= 0; i--) {
           const element = elements[i];
           if (element.isPointInsideShape(clientX, clientY)) {
             element.mouseStartX = clientX;
             element.mouseStartY = clientY;
-            index = i;
             setCurrentElement(cloneDeep(element));
-            setElements(moveToLast(elements, index));
+            setElements(moveToLast(elements, i));
             break;
           } else {
             setCurrentElement(null);
           }
         }
     }
+
   };
 
   const handleMouseMove = (event: React.MouseEvent<HTMLCanvasElement>) => {
@@ -84,10 +81,16 @@ const DrawingCanvas = () => {
       case Actions.draw:
         lastElement.handleMouseRelease(event);
         setCurrentElement(cloneDeep(lastElement));
-        return;
+        break;
       case Actions.move:
         if (currentElement) {
           lastElement.handleShapeMove(event);
+          setCurrentElement(cloneDeep(lastElement));
+        }
+        break;
+      case Actions.resize:
+        if (currentElement) {
+          lastElement.handleResize(event);
           setCurrentElement(cloneDeep(lastElement));
         }
     }
@@ -96,19 +99,19 @@ const DrawingCanvas = () => {
   const handleMouseUp = (event: React.MouseEvent<HTMLCanvasElement>) => {
     setDrawing(false);
 
-    switch (activeTool) {
-      case Actions.draw:
-        const lastIndex = elements.length - 1;
-        const lastElement = elements[lastIndex];
-        lastElement.handleMouseRelease(event);
-        break;
-      case Actions.move:
-    }
+    // switch (activeTool) {
+    //   case Actions.draw:
+    //     const lastIndex = elements.length - 1;
+    //     const lastElement = elements[lastIndex];
+    //     lastElement.handleMouseRelease(event);
+    //     break;
+    //   case Actions.move:
+    // }
   };
 
   return (
     <div className="w-canvas">
-      <button onClick={() => setActiveTool("move")}>move</button>
+      <button onClick={() => setActiveTool("resize")}>move</button>
       <canvas
         id="canvas"
         width={width}
