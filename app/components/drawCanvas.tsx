@@ -1,72 +1,31 @@
 "use client";
+import { cloneDeep } from "lodash";
 import { useLayoutEffect, useState } from "react";
 import useCanvasSize from "../hook/useWindowSize";
-import { cloneDeep } from "lodash";
+import { Circle, Rectangle, Shape } from "../shapes";
+import { getMousePoint, moveToLast } from "../utils";
 
-const getMousePoint = (event: React.MouseEvent<HTMLCanvasElement>) => {
-  const { clientX, clientY } = event;
-  return { clientX: clientX - 128, clientY: clientY - 48 };
+const Actions = {
+  draw: "draw",
+  move: "move",
+  resize: "resize",
 };
 
-interface Shape {
-  x: number;
-  y: number;
-  handleMouseRelease: (event: React.MouseEvent<HTMLCanvasElement>) => void;
-  draw: (context: CanvasRenderingContext2D) => void;
-}
+type PaintAction = "draw" | "move" | "resize";
+type Shapes = Circle["name"] | Rectangle["name"];
 
-class Rectangle implements Shape {
-  constructor(
-    public x: number,
-    public y: number,
-    public w: number = 0,
-    public h: number = 0
-  ) {}
-
-  handleMouseRelease(event: React.MouseEvent<HTMLCanvasElement>) {
-    const { clientX, clientY } = getMousePoint(event);
-
-    const startX = Math.min(this.x, clientX);
-    const endX = Math.max(this.x, clientX);
-    const startY = Math.min(this.y, clientY);
-    const endY = Math.max(this.y, clientY);
-
-    this.x = startX;
-    this.y = startY;
-    this.w = endX - startX;
-    this.h = endY - startY;
-  }
-
-  draw(context: CanvasRenderingContext2D) {
-    if (context) {
-      context.rect(this.x, this.y, this.w, this.h);
-    }
-  }
-}
-
-class Circle implements Shape {
-  constructor(public x: number, public y: number, public r: number = 0) {}
-
-  handleMouseRelease(event: React.MouseEvent<HTMLCanvasElement>) {
-    const { clientX, clientY } = getMousePoint(event);
-    this.r = Math.sqrt(
-      Math.pow(Math.abs(this.x - clientX), 2) +
-        Math.pow(Math.abs(this.y - clientY), 2)
-    );
-  }
-
-  draw(context: CanvasRenderingContext2D) {
-    if (context) {
-      context.arc(this.x, this.y, this.r, 0, 2 * Math.PI);
-    }
-  }
-}
+const ShapeClassMap = {
+  [Circle["name"]]: Circle,
+  [Rectangle["name"]]: Rectangle,
+};
 
 const DrawingCanvas = () => {
   const { width, height } = useCanvasSize();
   const [drawing, setDrawing] = useState<boolean>(false);
   const [elements, setElements] = useState<Shape[]>([]);
   const [currentElement, setCurrentElement] = useState<Shape | null>(null);
+  const [activeTool, setActiveTool] = useState<PaintAction>("draw");
+  const [activeShape, setActiveShape] = useState<Shapes>(Circle["name"]);
 
   useLayoutEffect(() => {
     const canvas = document.getElementById("canvas") as HTMLCanvasElement;
@@ -83,6 +42,7 @@ const DrawingCanvas = () => {
     if (currentElement) {
       currentElement.draw(context);
     }
+
   }, [elements, currentElement]);
 
   const handleMouseDown = (event: React.MouseEvent<HTMLCanvasElement>) => {
@@ -90,34 +50,65 @@ const DrawingCanvas = () => {
 
     const { clientX, clientY } = getMousePoint(event);
 
-    const selectedShape = Rectangle;
+    switch (activeTool) {
+      case Actions.draw:
+        const ActiveShape = ShapeClassMap[activeShape];
+        const element = new ActiveShape(clientX, clientY);
+        setElements([...elements, element]);
+        return;
+      case Actions.move:
+        let index: number;
 
-    const element = new selectedShape(clientX, clientY);
-
-    console.log("elements : ", elements);
-
-    setElements([...elements, element]);
+        for (let i = elements.length - 1; i >= 0; i--) {
+          const element = elements[i];
+          if (element.isPointInsideShape(clientX, clientY)) {
+            element.mouseStartX = clientX;
+            element.mouseStartY = clientY;
+            index = i;
+            setCurrentElement(cloneDeep(element));
+            setElements(moveToLast(elements, index));
+            break;
+          } else {
+            setCurrentElement(null);
+          }
+        }
+    }
   };
 
   const handleMouseMove = (event: React.MouseEvent<HTMLCanvasElement>) => {
-    if (!drawing) {
-      return;
-    }
+    if (!drawing) return;
     const lastIndex = elements.length - 1;
-    const lastElement = elements[lastIndex];
-    lastElement.handleMouseRelease(event);
-    setCurrentElement(cloneDeep(lastElement));
+    const lastElement = elements[lastIndex] as Shape;
+
+    switch (activeTool) {
+      case Actions.draw:
+        lastElement.handleMouseRelease(event);
+        setCurrentElement(cloneDeep(lastElement));
+        return;
+      case Actions.move:
+        if (currentElement) {
+          lastElement.handleShapeMove(event);
+          setCurrentElement(cloneDeep(lastElement));
+        }
+    }
   };
 
   const handleMouseUp = (event: React.MouseEvent<HTMLCanvasElement>) => {
     setDrawing(false);
-    const lastIndex = elements.length - 1;
-    const lastElement = elements[lastIndex];
-    lastElement.handleMouseRelease(event);
+
+    switch (activeTool) {
+      case Actions.draw:
+        const lastIndex = elements.length - 1;
+        const lastElement = elements[lastIndex];
+        lastElement.handleMouseRelease(event);
+        break;
+      case Actions.move:
+    }
   };
 
   return (
     <div className="w-canvas">
+      <button onClick={() => setActiveTool("move")}>move</button>
       <canvas
         id="canvas"
         width={width}
