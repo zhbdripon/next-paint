@@ -2,30 +2,18 @@
 import { cloneDeep } from "lodash";
 import { useLayoutEffect, useState } from "react";
 import useCanvasSize from "../hook/useWindowSize";
-import { Circle, Rectangle, Shape } from "../shapes";
+import { PaintActions, Shape, ShapeClassMap } from "../shapes";
+import useNextPaintStore from "../store";
 import { getMousePoint, moveToLast } from "../utils";
-
-const Actions = {
-  draw: "draw",
-  move: "move",
-  resize: "resize",
-};
-
-type PaintAction = "draw" | "move" | "resize";
-type Shapes = Circle["name"] | Rectangle["name"];
-
-const ShapeClassMap = {
-  [Circle["name"]]: Circle,
-  [Rectangle["name"]]: Rectangle,
-};
 
 const DrawingCanvas = () => {
   const { width, height } = useCanvasSize();
   const [drawing, setDrawing] = useState<boolean>(false);
-  const [elements, setElements] = useState<Shape[]>([]);
   const [currentElement, setCurrentElement] = useState<Shape | null>(null);
-  const [activeTool, setActiveTool] = useState<PaintAction>("draw");
-  const [activeShape, setActiveShape] = useState<Shapes>(Circle["name"]);
+  const elements = useNextPaintStore((s) => s.elements);
+  const setElements = useNextPaintStore((s) => s.setElements);
+  const activeTool = useNextPaintStore((s) => s.selectedTool);
+  const activeShape = useNextPaintStore((s) => s.selectedShape);
 
   useLayoutEffect(() => {
     const canvas = document.getElementById("canvas") as HTMLCanvasElement;
@@ -50,11 +38,12 @@ const DrawingCanvas = () => {
     const { clientX, clientY } = getMousePoint(event);
 
     switch (activeTool) {
-      case Actions.draw:
+      case PaintActions.draw:
         const ActiveShape = ShapeClassMap[activeShape];
         const element = new ActiveShape(clientX, clientY);
         setElements([...elements, element]);
         break;
+
       default:
         for (let i = elements.length - 1; i >= 0; i--) {
           const element = elements[i];
@@ -77,25 +66,26 @@ const DrawingCanvas = () => {
     const lastElement = elements[lastIndex] as Shape;
 
     switch (activeTool) {
-      case Actions.draw:
+      case PaintActions.draw:
         lastElement.handleMouseRelease(event);
-        setCurrentElement(cloneDeep(lastElement));
         break;
-      case Actions.move:
+
+      case PaintActions.move:
         if (currentElement) {
           lastElement.handleShapeMove(event);
-          setCurrentElement(cloneDeep(lastElement));
         }
         break;
-      case Actions.resize:
+
+      case PaintActions.resize:
         if (currentElement) {
           lastElement.handleResize(event);
-          setCurrentElement(cloneDeep(lastElement));
         }
     }
+
+    setCurrentElement(cloneDeep(lastElement));
   };
 
-  const handleMouseUp = (event: React.MouseEvent<HTMLCanvasElement>) => {
+  const handleMouseUp = () => {
     setDrawing(false);
   };
 
@@ -108,7 +98,6 @@ const DrawingCanvas = () => {
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
-        // className="border-8 border-black"
       ></canvas>
     </div>
   );

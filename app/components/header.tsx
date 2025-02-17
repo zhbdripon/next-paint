@@ -1,15 +1,45 @@
 "use client";
-import React from "react";
+import { Button } from "@radix-ui/themes";
+import { Shape, ShapeClassMap } from "../shapes";
 import useNextPaintStore from "../store";
 
 const Header = () => {
   const selectedTool = useNextPaintStore((s) => s.selectedTool);
   const selectedShape = useNextPaintStore((s) => s.selectedShape);
+  const elements = useNextPaintStore((s) => s.elements);
+  const setElements = useNextPaintStore((s) => s.setElements);
+
+  const handleSaveToLocalStorage = () => {
+    localStorage.setItem("elements", JSON.stringify(elements));
+  };
+
+  const handleLoadFromLocalStorage = () => {
+    const elementsFromStorage = localStorage.getItem("elements");
+    const constructedElements: Shape[] = [];
+
+    if (elementsFromStorage) {
+      const elementsData = JSON.parse(elementsFromStorage);
+      elementsData.forEach((element: Shape) => {
+        const ShapeClass = ShapeClassMap[element.name];
+        const shapeInstance = new ShapeClass(element.x, element.y);
+        Object.assign(shapeInstance, element);
+        constructedElements.push(shapeInstance);
+      });
+
+      setElements(constructedElements);
+    }
+  };
 
   return (
-    <div className="w-full h-16 border-2 bg-gray-100">
-      <div>Selected Tool : {selectedTool}</div>
-      {selectedShape && <div>Selected Shape : {selectedShape}</div>}
+    <div className="w-full h-16 border-2 bg-gray-100 flex justify-between">
+      <div>
+        <div>Selected Tool : {selectedTool}</div>
+        {selectedShape && <div>Selected Shape : {selectedShape}</div>}
+      </div>
+      <div className="[&>button]:m-1">
+        <Button onClick={handleLoadFromLocalStorage}>Load Saved</Button>
+        <Button onClick={handleSaveToLocalStorage}>Save</Button>
+      </div>
     </div>
   );
 };

@@ -1,9 +1,8 @@
 import { getDistance, getMousePoint } from "./utils";
-
 export abstract class Shape {
-  abstract readonly name: string;
-  abstract mouseStartX: number;
-  abstract mouseStartY: number;
+  abstract name: string;
+  mouseStartX = 0;
+  mouseStartY = 0;
   x = 0;
   y = 0;
 
@@ -39,10 +38,12 @@ export class Rectangle extends Shape {
   w = 0;
   h = 0;
 
-  constructor(public mouseStartX: number, public mouseStartY: number) {
+  constructor(public x: number, public y: number, w?: number, h?: number) {
     super();
-    this.x = mouseStartX;
-    this.y = mouseStartY;
+    this.mouseStartX = x;
+    this.mouseStartY = y;
+    this.w = w || 0;
+    this.h = h || 0;
   }
 
   override handleMouseRelease(event: React.MouseEvent<HTMLCanvasElement>) {
@@ -81,10 +82,11 @@ export class Circle extends Shape {
   name = "circle";
   r = 0;
 
-  constructor(public mouseStartX: number, public mouseStartY: number) {
+  constructor(public x: number, public y: number, r?: number) {
     super();
-    this.x = mouseStartX;
-    this.y = mouseStartY;
+    this.mouseStartX = x;
+    this.mouseStartY = y;
+    this.r = r || 0;
   }
 
   override handleMouseRelease(event: React.MouseEvent<HTMLCanvasElement>) {
@@ -120,3 +122,22 @@ export class Circle extends Shape {
     this.mouseStartY = clientY;
   }
 }
+
+export type PaintAction = "draw" | "move" | "resize";
+export const PaintActions: Record<string, PaintAction> = {
+  draw: "draw",
+  move: "move",
+  resize: "resize",
+} as const;
+
+export type PaintShape = "circle" | "rectangle";
+export const PaintShapes: Record<string, PaintShape> = {
+  circle: "circle",
+  rectangle: "rectangle",
+} as const;
+
+export type ShapeConstructor = new (x: number, y: number) => Shape;
+export const ShapeClassMap: Record<string, ShapeConstructor> = {
+  circle: Circle,
+  rectangle: Rectangle,
+};
