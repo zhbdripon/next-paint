@@ -30,6 +30,19 @@ const Header = () => {
     }
   };
 
+  const handlePaintDownload = () => {
+    const canvas = document.getElementById("canvas") as HTMLCanvasElement;
+    if (!canvas) return;
+
+    const image = canvas.toDataURL("image/png");
+    const link = document.createElement("a");
+    link.href = image;
+    link.download = "canvas-image.png";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   return (
     <div className="w-full h-16 border-2 bg-gray-100 flex justify-between">
       <div>
@@ -37,6 +50,9 @@ const Header = () => {
         {selectedShape && <div>Selected Shape : {selectedShape}</div>}
       </div>
       <div className="[&>button]:m-1">
+        {elements.length > 0 && (
+          <Button onClick={handlePaintDownload}>Download Paint</Button>
+        )}
         <Button onClick={handleLoadFromLocalStorage}>Load Saved</Button>
         <Button onClick={handleSaveToLocalStorage}>Save</Button>
       </div>

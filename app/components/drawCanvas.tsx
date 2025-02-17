@@ -21,6 +21,11 @@ const DrawingCanvas = () => {
     if (!context) return;
 
     context.clearRect(0, 0, width, height);
+    context.filter = "blur(5px)";
+    context.fillStyle = "rgba(255, 255, 255, 0.3)";
+    context.fillRect(0, 0, canvas.width, canvas.height);
+    context.filter = "none";
+
     elements.forEach((element) => {
       context.beginPath();
       element.draw(context);
