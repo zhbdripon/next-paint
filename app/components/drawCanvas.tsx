@@ -69,7 +69,6 @@ const DrawingCanvas = () => {
           }
         }
     }
-
   };
 
   const handleMouseMove = (event: React.MouseEvent<HTMLCanvasElement>) => {
@@ -98,20 +97,10 @@ const DrawingCanvas = () => {
 
   const handleMouseUp = (event: React.MouseEvent<HTMLCanvasElement>) => {
     setDrawing(false);
-
-    // switch (activeTool) {
-    //   case Actions.draw:
-    //     const lastIndex = elements.length - 1;
-    //     const lastElement = elements[lastIndex];
-    //     lastElement.handleMouseRelease(event);
-    //     break;
-    //   case Actions.move:
-    // }
   };
 
   return (
     <div className="w-canvas">
-      <button onClick={() => setActiveTool("resize")}>move</button>
       <canvas
         id="canvas"
         width={width}
@@ -119,6 +108,7 @@ const DrawingCanvas = () => {
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
+        // className="border-8 border-black"
       ></canvas>
     </div>
   );

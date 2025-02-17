@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { HEADER_SIZE, SIDEBAR_SIZE } from "../constants";
 
 interface CanvasSize {
   width: number;
@@ -16,8 +17,8 @@ const useCanvasSize = (): CanvasSize => {
 
     const updateSize = () => {
       setSize({
-        width: window.innerWidth - 128,
-        height: window.innerHeight - 48,
+        width: window.innerWidth - SIDEBAR_SIZE,
+        height: window.innerHeight - HEADER_SIZE,
       });
     };
 

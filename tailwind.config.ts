@@ -13,7 +13,7 @@ export default {
         foreground: "var(--foreground)",
       },
       height: {
-        'app-main': 'calc(100% - 3rem)',
+        'app-main': 'calc(100% - 4rem)',
       },
       width: {
         'canvas': 'calc(100% - 8rem)',

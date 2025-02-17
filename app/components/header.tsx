@@ -1,9 +1,17 @@
-import React from 'react'
+"use client";
+import React from "react";
+import useNextPaintStore from "../store";
 
 const Header = () => {
-  return (
-    <div className='w-full h-12 border-2 border-black'>Header</div>
-  )
-}
+  const selectedTool = useNextPaintStore((s) => s.selectedTool);
+  const selectedShape = useNextPaintStore((s) => s.selectedShape);
 
-export default Header
+  return (
+    <div className="w-full h-16 border-2 bg-gray-100">
+      <div>Selected Tool : {selectedTool}</div>
+      {selectedShape && <div>Selected Shape : {selectedShape}</div>}
+    </div>
+  );
+};
+
+export default Header;

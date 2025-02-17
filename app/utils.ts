@@ -1,6 +1,8 @@
+import { HEADER_SIZE, SIDEBAR_SIZE } from "./constants";
+
 export const getMousePoint = (event: React.MouseEvent<HTMLCanvasElement>) => {
   const { clientX, clientY } = event;
-  return { clientX: clientX - 128, clientY: clientY - 48 };
+  return { clientX: clientX - SIDEBAR_SIZE, clientY: clientY - HEADER_SIZE };
 };
 
 export const moveToLast = (arr: any[], i: number): any[] => {

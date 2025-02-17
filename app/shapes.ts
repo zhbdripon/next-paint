@@ -1,4 +1,4 @@
-import { getMousePoint, getDistance } from "./utils";
+import { getDistance, getMousePoint } from "./utils";
 
 export abstract class Shape {
   abstract readonly name: string;
@@ -8,6 +8,7 @@ export abstract class Shape {
   y = 0;
 
   abstract handleMouseRelease(event: React.MouseEvent<HTMLCanvasElement>): void;
+  abstract handleResize(event: React.MouseEvent<HTMLCanvasElement>): void;
   abstract isPointInsideShape(x: number, y: number): boolean;
   abstract draw(context: CanvasRenderingContext2D): void;
 
