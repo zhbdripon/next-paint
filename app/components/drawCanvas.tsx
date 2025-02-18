@@ -4,7 +4,7 @@ import { useLayoutEffect, useState } from "react";
 import useCanvasSize from "../hook/useWindowSize";
 import { PaintActions, Shape, ShapeClassMap } from "../shapes";
 import useNextPaintStore from "../store";
-import { getMousePoint, moveToLast } from "../utils";
+import { getTouchOrMousePoint, moveToLast } from "../utils";
 
 const DrawingCanvas = () => {
   const { width, height } = useCanvasSize();
@@ -37,10 +37,14 @@ const DrawingCanvas = () => {
     }
   }, [elements, currentElement]);
 
-  const handleMouseDown = (event: React.MouseEvent<HTMLCanvasElement>) => {
+  const handleMouseDown = (
+    event:
+      | React.MouseEvent<HTMLCanvasElement>
+      | React.TouchEvent<HTMLCanvasElement>
+  ) => {
     setDrawing(true);
 
-    const { clientX, clientY } = getMousePoint(event);
+    const { clientX, clientY } = getTouchOrMousePoint(event);
 
     switch (activeTool) {
       case PaintActions.draw:
@@ -65,7 +69,11 @@ const DrawingCanvas = () => {
     }
   };
 
-  const handleMouseMove = (event: React.MouseEvent<HTMLCanvasElement>) => {
+  const handleMouseMove = (
+    event:
+      | React.MouseEvent<HTMLCanvasElement>
+      | React.TouchEvent<HTMLCanvasElement>
+  ) => {
     if (!drawing) return;
     const lastIndex = elements.length - 1;
     const lastElement = elements[lastIndex] as Shape;
@@ -95,14 +103,18 @@ const DrawingCanvas = () => {
   };
 
   return (
-    <div className="w-canvas">
+    <div className="w-full md:w-canvas">
       <canvas
         id="canvas"
+        className="border-2"
         width={width}
         height={height}
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
+        onTouchStart={handleMouseDown}
+        onTouchMove={handleMouseMove}
+        onTouchEnd={handleMouseUp}
       ></canvas>
     </div>
   );

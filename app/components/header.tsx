@@ -46,14 +46,14 @@ const Header = () => {
   return (
     <div className="w-full h-16 border-2 bg-gray-100 flex justify-between">
       <div>
-        <div>Selected Tool : {selectedTool}</div>
-        {selectedShape && <div>Selected Shape : {selectedShape}</div>}
+        <div>Tool : {selectedTool}</div>
+        {selectedShape && <div>Shape : {selectedShape}</div>}
       </div>
       <div className="[&>button]:m-1">
         {elements.length > 0 && (
-          <Button onClick={handlePaintDownload}>Download Paint</Button>
+          <Button onClick={handlePaintDownload}>Download</Button>
         )}
-        <Button onClick={handleLoadFromLocalStorage}>Load Saved</Button>
+        <Button onClick={handleLoadFromLocalStorage}>Load</Button>
         <Button onClick={handleSaveToLocalStorage}>Save</Button>
       </div>
     </div>

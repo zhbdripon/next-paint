@@ -1,8 +1,27 @@
-import { HEADER_SIZE, SIDEBAR_SIZE } from "./constants";
+import { HEADER_SIZE, LARGE_SCREEN_MIN_WIDTH, SIDEBAR_SIZE } from "./constants";
 
-export const getMousePoint = (event: React.MouseEvent<HTMLCanvasElement>) => {
-  const { clientX, clientY } = event;
-  return { clientX: clientX - SIDEBAR_SIZE, clientY: clientY - HEADER_SIZE };
+export const getTouchOrMousePoint = (
+  event:
+    | React.MouseEvent<HTMLCanvasElement>
+    | React.TouchEvent<HTMLCanvasElement>
+) => {
+  let clientX, clientY;
+
+  if ("touches" in event) {
+    const touch = event.touches[0];
+    clientX = touch.clientX;
+    clientY = touch.clientY;
+  } else {
+    clientX = event.clientX;
+    clientY = event.clientY;
+  }
+
+  const isLargeScreen = window.innerWidth >= LARGE_SCREEN_MIN_WIDTH;
+  const xPos = clientX - (isLargeScreen ? SIDEBAR_SIZE : 0);
+  const yPos =
+    clientY - (isLargeScreen ? HEADER_SIZE : HEADER_SIZE + SIDEBAR_SIZE);
+
+  return { clientX: xPos, clientY: yPos };
 };
 
 export const moveToLast = (arr: any[], i: number): any[] => {

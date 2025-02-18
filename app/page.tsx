@@ -7,7 +7,7 @@ export default function Home() {
   return (
     <div className="h-screen w-screen">
       <Header />
-      <div className="flex column h-app-main">
+      <div className="md:flex md:column h-app-main">
         <ActionBar />
         <DrawBar />
         <DrawingCanvas />

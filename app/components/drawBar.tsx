@@ -10,7 +10,7 @@ const DrawBar = () => {
   const selectedShape = useNextPaintStore((s) => s.selectedShape);
 
   return (
-    <div className="h-full w-16 border-2 bg-gray-100 flex flex-col justify-start items-center">
+    <div className="h-16 md:h-full w-full md:w-16 border-2 bg-gray-100 flex flex-row md:flex-col justify-start items-center">
       <ToggleButton
         value={selectedShape === "circle"}
         icon={FaRegCircle}

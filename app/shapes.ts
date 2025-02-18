@@ -1,4 +1,4 @@
-import { getDistance, getMousePoint } from "./utils";
+import { getDistance, getTouchOrMousePoint } from "./utils";
 export abstract class Shape {
   abstract name: string;
   mouseStartX = 0;
@@ -6,13 +6,25 @@ export abstract class Shape {
   x = 0;
   y = 0;
 
-  abstract handleMouseRelease(event: React.MouseEvent<HTMLCanvasElement>): void;
-  abstract handleResize(event: React.MouseEvent<HTMLCanvasElement>): void;
+  abstract handleMouseRelease(
+    event:
+      | React.MouseEvent<HTMLCanvasElement>
+      | React.TouchEvent<HTMLCanvasElement>
+  ): void;
+  abstract handleResize(
+    event:
+      | React.MouseEvent<HTMLCanvasElement>
+      | React.TouchEvent<HTMLCanvasElement>
+  ): void;
   abstract isPointInsideShape(x: number, y: number): boolean;
   abstract draw(context: CanvasRenderingContext2D): void;
 
-  handleShapeMove(event: React.MouseEvent<HTMLCanvasElement>) {
-    const { clientX, clientY } = getMousePoint(event);
+  handleShapeMove(
+    event:
+      | React.MouseEvent<HTMLCanvasElement>
+      | React.TouchEvent<HTMLCanvasElement>
+  ) {
+    const { clientX, clientY } = getTouchOrMousePoint(event);
     const diffX = clientX - this.mouseStartX;
     const diffY = clientY - this.mouseStartY;
     this.x += diffX;
@@ -21,8 +33,12 @@ export abstract class Shape {
     this.mouseStartY = clientY;
   }
 
-  _getMouseStartEndPoints(event: React.MouseEvent<HTMLCanvasElement>) {
-    const { clientX, clientY } = getMousePoint(event);
+  _getStartAndEndPoints(
+    event:
+      | React.MouseEvent<HTMLCanvasElement>
+      | React.TouchEvent<HTMLCanvasElement>
+  ) {
+    const { clientX, clientY } = getTouchOrMousePoint(event);
 
     const startX = Math.min(this.mouseStartX, clientX);
     const endX = Math.max(this.mouseStartX, clientX);
@@ -46,8 +62,12 @@ export class Rectangle extends Shape {
     this.h = h || 0;
   }
 
-  override handleMouseRelease(event: React.MouseEvent<HTMLCanvasElement>) {
-    const { startX, startY, endX, endY } = this._getMouseStartEndPoints(event);
+  override handleMouseRelease(
+    event:
+      | React.MouseEvent<HTMLCanvasElement>
+      | React.TouchEvent<HTMLCanvasElement>
+  ) {
+    const { startX, startY, endX, endY } = this._getStartAndEndPoints(event);
 
     this.x = startX;
     this.y = startY;
@@ -67,8 +87,12 @@ export class Rectangle extends Shape {
     );
   }
 
-  handleResize(event: React.MouseEvent<HTMLCanvasElement>) {
-    const { clientX, clientY } = getMousePoint(event);
+  handleResize(
+    event:
+      | React.MouseEvent<HTMLCanvasElement>
+      | React.TouchEvent<HTMLCanvasElement>
+  ) {
+    const { clientX, clientY } = getTouchOrMousePoint(event);
     const diffX = clientX - this.mouseStartX;
     const diffY = clientY - this.mouseStartY;
     this.w += diffX;
@@ -89,8 +113,12 @@ export class Circle extends Shape {
     this.r = r || 0;
   }
 
-  override handleMouseRelease(event: React.MouseEvent<HTMLCanvasElement>) {
-    const { clientX, clientY } = getMousePoint(event);
+  override handleMouseRelease(
+    event:
+      | React.MouseEvent<HTMLCanvasElement>
+      | React.TouchEvent<HTMLCanvasElement>
+  ) {
+    const { clientX, clientY } = getTouchOrMousePoint(event);
     this.r = getDistance(this.x, this.y, clientX, clientY);
   }
 
@@ -105,8 +133,12 @@ export class Circle extends Shape {
     return distanceSquared <= this.r ** 2;
   }
 
-  handleResize(event: React.MouseEvent<HTMLCanvasElement>) {
-    const { clientX, clientY } = getMousePoint(event);
+  handleResize(
+    event:
+      | React.MouseEvent<HTMLCanvasElement>
+      | React.TouchEvent<HTMLCanvasElement>
+  ) {
+    const { clientX, clientY } = getTouchOrMousePoint(event);
 
     const initialDistance = getDistance(
       this.x,

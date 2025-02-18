@@ -1,5 +1,9 @@
-import { useState, useEffect } from "react";
-import { HEADER_SIZE, SIDEBAR_SIZE } from "../constants";
+import { useEffect, useState } from "react";
+import {
+  HEADER_SIZE,
+  LARGE_SCREEN_MIN_WIDTH,
+  SIDEBAR_SIZE,
+} from "../constants";
 
 interface CanvasSize {
   width: number;
@@ -16,9 +20,13 @@ const useCanvasSize = (): CanvasSize => {
     if (typeof window === "undefined") return;
 
     const updateSize = () => {
+      const isLargeScreen = window.innerWidth >= LARGE_SCREEN_MIN_WIDTH;
+
       setSize({
-        width: window.innerWidth - SIDEBAR_SIZE,
-        height: window.innerHeight - HEADER_SIZE,
+        width: window.innerWidth - (isLargeScreen ? SIDEBAR_SIZE : 0),
+        height:
+          window.innerHeight -
+          (isLargeScreen ? HEADER_SIZE : HEADER_SIZE + SIDEBAR_SIZE),
       });
     };
 

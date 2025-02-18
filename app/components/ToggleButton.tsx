@@ -10,7 +10,7 @@ interface Props {
 
 const ToggleButton = ({ icon: Icon, value, tooltip, onSwitchedOn }: Props) => {
   return (
-    <div className="p-2 border-b-2 ">
+    <div className="p-2 md:border-b-2 ">
       <Icon size={25} color={value ? "red" : "black"} onClick={onSwitchedOn} />
     </div>
   );
