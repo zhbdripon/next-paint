@@ -5,11 +5,16 @@ import { MdOutlineRedo, MdOutlineUndo } from "react-icons/md";
 import { RiDragMove2Line } from "react-icons/ri";
 import useNextPaintStore from "../store";
 import ToggleButton from "./ToggleButton";
+import ActionButton from "./ActionButton";
 
 const ActionBar = () => {
   const setSelectedTool = useNextPaintStore((s) => s.setSelectedTool);
   const setSelectedShape = useNextPaintStore((s) => s.setSelectedShape);
   const selectedTool = useNextPaintStore((s) => s.selectedTool);
+  const undo = useNextPaintStore((s) => s.undo);
+  const redo = useNextPaintStore((s) => s.redo);
+  const undoDisabled = useNextPaintStore((s) => s.undoDisabled);
+  const redoDisabled = useNextPaintStore((s) => s.redoDisabled);
 
   return (
     <div className="h-16 md:h-full w-full md:w-16 border-2 bg-gray-100 flex flex-row md:flex-col justify-start items-center">
@@ -25,7 +30,7 @@ const ActionBar = () => {
         icon={RiDragMove2Line}
         onSwitchedOn={() => {
           setSelectedTool("move");
-          setSelectedShape("");
+          setSelectedShape(null);
         }}
       />
       <ToggleButton
@@ -33,22 +38,20 @@ const ActionBar = () => {
         icon={IoMdResize}
         onSwitchedOn={() => {
           setSelectedTool("resize");
-          setSelectedShape("");
+          setSelectedShape(null);
         }}
       />
-      <ToggleButton
-        value={selectedTool === "undo"}
+      <ActionButton
+        tooltip="undo"
         icon={MdOutlineUndo}
-        onSwitchedOn={() => {
-          setSelectedTool("undo");
-        }}
+        onClick={undo}
+        disabled={undoDisabled}
       />
-      <ToggleButton
-        value={selectedTool === "redo"}
+      <ActionButton
+        tooltip="redo"
         icon={MdOutlineRedo}
-        onSwitchedOn={() => {
-          setSelectedTool("redo");
-        }}
+        onClick={redo}
+        disabled={redoDisabled}
       />
     </div>
   );

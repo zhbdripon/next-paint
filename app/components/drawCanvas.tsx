@@ -14,6 +14,8 @@ const DrawingCanvas = () => {
   const setElements = useNextPaintStore((s) => s.setElements);
   const activeTool = useNextPaintStore((s) => s.selectedTool);
   const activeShape = useNextPaintStore((s) => s.selectedShape);
+  const addToEditHistory = useNextPaintStore((s) => s.addToEditHistory);
+  const editHistory = useNextPaintStore((s) => s.editHistory);
 
   useLayoutEffect(() => {
     const canvas = document.getElementById("canvas") as HTMLCanvasElement;
@@ -100,13 +102,13 @@ const DrawingCanvas = () => {
 
   const handleMouseUp = () => {
     setDrawing(false);
+    addToEditHistory(elements);
   };
 
   return (
     <div className="w-full md:w-canvas">
       <canvas
         id="canvas"
-        className="border-2"
         width={width}
         height={height}
         onMouseDown={handleMouseDown}
