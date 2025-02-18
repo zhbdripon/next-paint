@@ -1,36 +1,63 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Next Paint 🎨
+![Preview](public/preview.png)
 
-## Getting Started
+Next Paint is a simple web-based drawing application that allows users to create, move, and resize shapes, save designs to LocalStorage, and export the canvas as a PNG file.
 
-First, run the development server:
+## 🚀 Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+### ✅ Minimum Requirements
+
+- **Pre-built Shapes**: Supports built-in shapes like rectangles and circles.
+- **Drag & Resize**: Move and resize shapes freely.
+- **Save & Load Designs**: Store designs in LocalStorage and reload them later.
+- **Download Design**: Export the canvas as a PNG file.
+
+### 🎉 Extras
+
+- **Undo/Redo**: Basic action history management.
+- **Transparent Card Effect**: Apply a blurred transparent effect to the background of the canvas.
+
+## 📦 Installation & Setup
+
+### 📌 Prerequisites
+
+- **Required Node.js version**: `20.18.x`
+
+### 📥 Clone the Repository
+
+```sh
+git clone https://github.com/zhbdripon/next-paint.git
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 📂 Navigate to Project Root
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```sh
+cd next-paint
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 📦 Install Dependencies
 
-## Learn More
+```sh
+npm install
+```
 
-To learn more about Next.js, take a look at the following resources:
+### ▶️ Run the Project
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```sh
+npm run dev
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+The project will be available at `http://localhost:3000/` by default.
 
-## Deploy on Vercel
+## 🤝 Contributing
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Feel free to fork the repository and submit pull requests to improve the project!
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 📜 License
+
+This project is licensed under the MIT License.
+
+---
+
+Happy Coding! 🎨✨
+
