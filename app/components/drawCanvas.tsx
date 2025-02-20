@@ -56,6 +56,7 @@ const DrawingCanvas = () => {
         break;
 
       default:
+        let foundElement = false;
         for (let i = elements.length - 1; i >= 0; i--) {
           const element = elements[i];
           if (element.isPointInsideShape(clientX, clientY)) {
@@ -63,10 +64,13 @@ const DrawingCanvas = () => {
             element.mouseStartY = clientY;
             setCurrentElement(cloneDeep(element));
             setElements(moveToLast(elements, i));
+            foundElement = true;
             break;
-          } else {
-            setCurrentElement(null);
           }
+        }
+
+        if (!foundElement) {
+          setCurrentElement(null);
         }
     }
   };
@@ -102,7 +106,7 @@ const DrawingCanvas = () => {
 
   const handleMouseUp = () => {
     setDrawing(false);
-    addToEditHistory(elements);
+    addToEditHistory(cloneDeep(elements));
   };
 
   return (

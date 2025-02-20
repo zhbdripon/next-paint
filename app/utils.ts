@@ -24,7 +24,7 @@ export const getTouchOrMousePoint = (
   return { clientX: xPos, clientY: yPos };
 };
 
-export const moveToLast = (arr: any[], i: number): any[] => {
+export const moveToLast = <T>(arr: T[], i: number): T[] => {
   const item = arr.splice(i, 1)[0];
   arr.push(item);
   return arr;
