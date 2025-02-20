@@ -13,13 +13,8 @@ const ActionButton = ({ icon: Icon, tooltip, onClick, disabled }: Props) => {
   return (
     <div className="p-2 md:border-b-2 ">
       <Tooltip content={tooltip}>
-        <IconButton
-          onClick={onClick}
-          variant="outline"
-          color="gray"
-          disabled={disabled}
-        >
-          <Icon size={25} />
+        <IconButton onClick={onClick} variant="outline" disabled={disabled}>
+          <Icon size={25} color={disabled ? "gray" : "black"} />
         </IconButton>
       </Tooltip>
     </div>

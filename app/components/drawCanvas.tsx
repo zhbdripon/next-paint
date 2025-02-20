@@ -50,7 +50,7 @@ const DrawingCanvas = () => {
 
     switch (activeTool) {
       case PaintActions.draw:
-        const ActiveShape = ShapeClassMap[activeShape];
+        const ActiveShape = ShapeClassMap[activeShape!];
         const element = new ActiveShape(clientX, clientY);
         setElements([...elements, element]);
         break;
